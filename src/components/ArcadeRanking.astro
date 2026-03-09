@@ -1,0 +1,306 @@
+---
+interface Props {
+  gameId: string;
+}
+const { gameId } = Astro.props;
+---
+
+<!-- Ranking overlay - shown on game over -->
+<div id="ranking-overlay" class="ranking-overlay hidden">
+  <div class="ranking-box">
+    <div class="ranking-title mono">GAME OVER</div>
+    <div class="final-score mono" id="final-score-display"></div>
+
+    <div id="name-entry" class="name-entry">
+      <div class="name-label mono">INTRODUCE TUS INICIALES</div>
+      <div class="name-inputs">
+        <input type="text" class="name-char" id="char0" maxlength="1" autocomplete="off" />
+        <input type="text" class="name-char" id="char1" maxlength="1" autocomplete="off" />
+        <input type="text" class="name-char" id="char2" maxlength="1" autocomplete="off" />
+      </div>
+      <button class="confirm-btn mono" id="confirm-score">CONFIRMAR ↵</button>
+    </div>
+
+    <div class="ranking-list" id="ranking-list"></div>
+
+    <div class="ranking-actions">
+      <button class="action-btn mono" id="play-again">▶ PLAY AGAIN</button>
+      <a href="/games" class="action-btn mono">← ARCADE</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ranking-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 13, 19, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+  }
+
+  .ranking-overlay.hidden { display: none; }
+
+  .ranking-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius);
+    padding: 2rem;
+    width: min(420px, 90vw);
+    box-shadow: 0 0 60px rgba(0,212,170,0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .ranking-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-align: center;
+    text-shadow: 0 0 20px rgba(0,212,170,0.5);
+  }
+
+  .final-score {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+  }
+
+  .name-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .name-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .name-inputs {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .name-char {
+    width: 52px;
+    height: 60px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.2s;
+    caret-color: transparent;
+  }
+
+  .name-char:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,212,170,0.2);
+  }
+
+  .confirm-btn {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .confirm-btn:hover {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  /* Ranking list */
+  .ranking-list {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .ranking-header {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    padding: 0 0.25rem;
+  }
+
+  .ranking-entry {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.3rem 0.25rem;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+
+  .ranking-entry.highlight {
+    background: rgba(0,212,170,0.08);
+    border: 1px solid var(--border-accent);
+  }
+
+  .rank-pos { color: var(--text-muted); }
+  .rank-pos.gold   { color: #fbbf24; }
+  .rank-pos.silver { color: #94a3b8; }
+  .rank-pos.bronze { color: #f97316; }
+  .rank-name { color: var(--text-primary); letter-spacing: 0.15em; }
+  .rank-score { color: var(--accent); text-align: right; }
+
+  .ranking-empty {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  /* Actions */
+  .ranking-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
+
+<script define:vars={{ gameId }}>
+  const STORAGE_KEY = `ranking:${gameId}`;
+  const MAX_ENTRIES = 10;
+
+  let pendingScore = 0;
+  let newEntryIndex = -1;
+
+  async function loadScores() {
+    try {
+      const result = await window.storage.get(STORAGE_KEY, true);
+      return result ? JSON.parse(result.value) : [];
+    } catch { return []; }
+  }
+
+  async function saveScore(name, score) {
+    const scores = await loadScores();
+    scores.push({ name: name.toUpperCase().padEnd(3, ' ').slice(0, 3), score });
+    scores.sort((a, b) => b.score - a.score);
+    const trimmed = scores.slice(0, MAX_ENTRIES);
+    newEntryIndex = trimmed.findIndex(s => s.name === name.toUpperCase().padEnd(3, ' ').slice(0, 3) && s.score === score);
+    try {
+      await window.storage.set(STORAGE_KEY, JSON.stringify(trimmed), true);
+    } catch {}
+    return trimmed;
+  }
+
+  function renderRankingList(scores) {
+    const container = document.getElementById('ranking-list');
+    if (!container) return;
+    const medals = ['gold', 'silver', 'bronze'];
+    if (scores.length === 0) {
+      container.innerHTML = '<div class="ranking-empty">¡Sé el primero en el ranking!</div>';
+      return;
+    }
+    container.innerHTML = `
+      <div class="ranking-header">
+        <span>#</span><span>NOMBRE</span><span>SCORE</span>
+      </div>
+      ${scores.map((s, i) => `
+        <div class="ranking-entry ${i === newEntryIndex ? 'highlight' : ''}">
+          <span class="rank-pos ${medals[i] || ''}">${i + 1}</span>
+          <span class="rank-name">${s.name}</span>
+          <span class="rank-score">${s.score.toLocaleString()}</span>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  // Auto-focus and navigate between char inputs
+  const chars = [
+    document.getElementById('char0'),
+    document.getElementById('char1'),
+    document.getElementById('char2'),
+  ];
+
+  chars.forEach((input, i) => {
+    input?.addEventListener('input', (e) => {
+      const val = e.target.value.replace(/[^a-zA-Z0-9]/, '');
+      e.target.value = val.toUpperCase();
+      if (val && i < 2) chars[i + 1]?.focus();
+    });
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && i > 0) {
+        chars[i - 1]?.focus();
+      }
+      if (e.key === 'Enter') confirmScore();
+    });
+  });
+
+  async function confirmScore() {
+    const name = chars.map(c => c?.value || '_').join('');
+    if (name.replace(/_/g, '').length === 0) return;
+    const scores = await saveScore(name, pendingScore);
+    document.getElementById('name-entry')?.remove();
+    renderRankingList(scores);
+  }
+
+  document.getElementById('confirm-score')?.addEventListener('click', confirmScore);
+
+  // Public API: called by each game on game over
+  window.showRanking = async function(score) {
+    pendingScore = score;
+    newEntryIndex = -1;
+    document.getElementById('final-score-display').textContent = `SCORE: ${score.toLocaleString()}`;
+    chars.forEach(c => { if (c) c.value = ''; });
+    const scores = await loadScores();
+    renderRankingList(scores);
+    document.getElementById('ranking-overlay')?.classList.remove('hidden');
+    setTimeout(() => chars[0]?.focus(), 100);
+  };
+
+  document.getElementById('play-again')?.addEventListener('click', () => {
+    document.getElementById('ranking-overlay')?.classList.add('hidden');
+    window.restartGame?.();
+  });
+</script>

@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArcadeRanking from '../../components/ArcadeRanking.astro';
+---
+
+<BaseLayout title="// TETRIS — Arcade" description="Tetris">
+  <div class="game-wrapper">
+    <div class="game-container">
+      <div class="game-header">
+        <a href="/games" class="back-link mono">← arcade</a>
+        <span class="game-title mono accent">TETRIS</span>
+        <div class="game-meta">
+          <div class="meta-item"><span class="meta-label">SCORE</span><span class="meta-value" id="score">0</span></div>
+          <div class="meta-item"><span class="meta-label">LINES</span><span class="meta-value" id="lines">0</span></div>
+          <div class="meta-item"><span class="meta-label">LEVEL</span><span class="meta-value" id="level">1</span></div>
+        </div>
+      </div>
+      <div class="game-area">
+        <canvas id="tetris" width="300" height="600"></canvas>
+        <div class="game-side">
+          <div class="next-piece-box">
+            <div class="box-label mono">NEXT</div>
+            <canvas id="next" width="120" height="120"></canvas>
+          </div>
+          <div class="controls-box">
+            <div class="box-label mono">CONTROLS</div>
+            <div class="control-item"><kbd>←→</kbd> mover</div>
+            <div class="control-item"><kbd>↑</kbd> rotar</div>
+            <div class="control-item"><kbd>↓</kbd> bajar</div>
+            <div class="control-item"><kbd>Space</kbd> caída</div>
+            <div class="control-item"><kbd>P</kbd> pausa</div>
+          </div>
+          <div class="mobile-controls">
+            <div class="mobile-row"><button class="mobile-btn" id="btn-rotate">↑</button></div>
+            <div class="mobile-row">
+              <button class="mobile-btn" id="btn-left">←</button>
+              <button class="mobile-btn" id="btn-down">↓</button>
+              <button class="mobile-btn" id="btn-right">→</button>
+            </div>
+            <div class="mobile-row"><button class="mobile-btn wide" id="btn-drop">DROP</button></div>
+          </div>
+        </div>
+      </div>
+      <div id="overlay" class="overlay">
+        <div class="overlay-content">
+          <div class="overlay-title" id="overlay-title">TETRIS</div>
+          <div class="overlay-sub" id="overlay-sub">Pulsa ENTER para empezar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ArcadeRanking gameId="tetris" />
+</BaseLayout>
+
+<style>
+.game-wrapper { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:6rem 1rem 2rem; }
+.game-container { position:relative; display:flex; flex-direction:column; gap:1rem; max-width:500px; width:100%; }
+.game-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem; }
+.back-link { font-family:var(--font-mono); font-size:.8rem; color:var(--text-muted); transition:color .2s; }
+.back-link:hover { color:var(--accent); }
+.game-title { font-size:1rem; letter-spacing:.1em; }
+.game-meta { display:flex; gap:1.5rem; }
+.meta-item { display:flex; flex-direction:column; align-items:center; }
+.meta-label { font-family:var(--font-mono); font-size:.65rem; color:var(--text-muted); letter-spacing:.1em; }
+.meta-value { font-family:var(--font-mono); font-size:1.1rem; font-weight:700; color:var(--accent); }
+.game-area { display:flex; gap:1rem; align-items:flex-start; justify-content:center; }
+#tetris { border:1px solid var(--border-accent); border-radius:4px; display:block; background:var(--bg-secondary); box-shadow:0 0 30px rgba(0,212,170,.1); max-width:100%; }
+.game-side { display:flex; flex-direction:column; gap:1rem; min-width:120px; }
+.next-piece-box, .controls-box { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:.75rem; }
+.box-label { font-size:.65rem; color:var(--accent); letter-spacing:.1em; margin-bottom:.5rem; font-family:var(--font-mono); }
+#next { display:block; margin:0 auto; }
+.control-item { font-size:.75rem; color:var(--text-muted); margin-bottom:.3rem; display:flex; align-items:center; gap:.4rem; }
+kbd { font-family:var(--font-mono); font-size:.65rem; background:var(--bg-secondary); border:1px solid var(--border); border-radius:3px; padding:.1rem .35rem; color:var(--accent); min-width:1.8rem; text-align:center; }
+.mobile-controls { display:none; flex-direction:column; gap:.4rem; }
+.mobile-row { display:flex; justify-content:center; gap:.4rem; }
+.mobile-btn { font-family:var(--font-mono); font-size:1rem; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; color:var(--accent); width:52px; height:52px; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; user-select:none; }
+.mobile-btn.wide { width:120px; font-size:.75rem; letter-spacing:.05em; }
+.mobile-btn:active { background:var(--accent-dim); border-color:var(--accent); transform:scale(.95); }
+@media(max-width:600px){ .mobile-controls{display:flex;} .controls-box{display:none;} .game-side{min-width:100px;} #tetris{width:240px;height:480px;} }
+.overlay { position:absolute; inset:0; top:60px; display:flex; align-items:center; justify-content:center; background:rgba(8,13,19,.92); border-radius:4px; backdrop-filter:blur(4px); cursor:pointer; z-index:10; }
+.overlay.hidden { display:none; }
+.overlay-content { text-align:center; padding:2rem; }
+.overlay-title { font-family:var(--font-mono); font-size:2.5rem; font-weight:700; color:var(--accent); letter-spacing:.2em; margin-bottom:.5rem; text-shadow:0 0 20px rgba(0,212,170,.5); }
+.overlay-sub { font-size:.85rem; color:var(--text-secondary); font-family:var(--font-mono); }
+.accent { color:var(--accent); }
+.mono { font-family:var(--font-mono); }
+</style>
+
+<script>
+const canvas = document.getElementById('tetris') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d')!;
+const nextCanvas = document.getElementById('next') as HTMLCanvasElement;
+const nextCtx = nextCanvas.getContext('2d')!;
+const overlay = document.getElementById('overlay')!;
+const COLS=10,ROWS=20,BLOCK=canvas.width/COLS;
+const COLORS=[null,'#00d4aa','#3b82f6','#a855f7','#f59e0b','#ef4444','#10b981','#f97316'];
+const PIECES=[null,[[1,1,1,1]],[[2,2],[2,2]],[[0,3,0],[3,3,3]],[[0,4,4],[4,4,0]],[[5,5,0],[0,5,5]],[[6,0,0],[6,6,6]],[[0,0,7],[7,7,7]]];
+let board:number[][],score:number,lines:number,level:number,gameOver:boolean,paused:boolean,animId:number,lastTime:number,dropCounter:number,currentPiece:any,nextPiece:any;
+
+function createBoard(){return Array.from({length:ROWS},()=>Array(COLS).fill(0));}
+function randomPiece(){const id=Math.floor(Math.random()*7)+1;return{matrix:PIECES[id]!.map((r:number[])=>[...r])};}
+function collides(matrix:number[][],pos:{x:number,y:number}){for(let r=0;r<matrix.length;r++)for(let c=0;c<matrix[r].length;c++)if(matrix[r][c]&&(pos.y+r>=ROWS||pos.x+c<0||pos.x+c>=COLS||board[pos.y+r]?.[pos.x+c]))return true;return false;}
+function merge(){currentPiece.matrix.forEach((row:number[],r:number)=>{row.forEach((val:number,c:number)=>{if(val)board[currentPiece.pos.y+r][currentPiece.pos.x+c]=val;});});}
+function clearLines(){let cleared=0;for(let r=ROWS-1;r>=0;r--){if(board[r].every((v:number)=>v!==0)){board.splice(r,1);board.unshift(Array(COLS).fill(0));cleared++;r++;}}if(cleared>0){const pts=[0,100,300,500,800];score+=(pts[cleared]||800)*level;lines+=cleared;level=Math.floor(lines/10)+1;updateHUD();}}
+function rotate(matrix:number[][]){const N=matrix.length,M=matrix[0].length,result=Array.from({length:M},()=>Array(N).fill(0));for(let r=0;r<N;r++)for(let c=0;c<M;c++)result[c][N-1-r]=matrix[r][c];return result;}
+function tryRotate(){const rotated=rotate(currentPiece.matrix);for(const kick of[0,-1,1,-2,2]){const pos={x:currentPiece.pos.x+kick,y:currentPiece.pos.y};if(!collides(rotated,pos)){currentPiece.matrix=rotated;currentPiece.pos.x+=kick;return;}}}
+function spawnPiece(){currentPiece={matrix:nextPiece.matrix,pos:{x:Math.floor(COLS/2)-Math.floor(nextPiece.matrix[0].length/2),y:0}};nextPiece=randomPiece();drawNext();if(collides(currentPiece.matrix,currentPiece.pos))endGame();}
+function drop(){currentPiece.pos.y++;if(collides(currentPiece.matrix,currentPiece.pos)){currentPiece.pos.y--;merge();clearLines();spawnPiece();}dropCounter=0;}
+function hardDrop(){while(!collides(currentPiece.matrix,{...currentPiece.pos,y:currentPiece.pos.y+1})){currentPiece.pos.y++;score+=2;}drop();updateHUD();}
+function getGhostY(){let g=currentPiece.pos.y;while(!collides(currentPiece.matrix,{x:currentPiece.pos.x,y:g+1}))g++;return g;}
+function drawBlock(c:CanvasRenderingContext2D,x:number,y:number,colorId:number,bs:number,alpha=1){const color=COLORS[colorId];if(!color)return;c.globalAlpha=alpha;c.fillStyle=color;c.fillRect(x*bs+1,y*bs+1,bs-2,bs-2);c.globalAlpha=0.3;c.fillStyle='#fff';c.fillRect(x*bs+2,y*bs+2,bs-4,3);c.globalAlpha=1;}
+function drawBoard(){ctx.fillStyle='#0d1520';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.strokeStyle='rgba(30,45,66,.5)';ctx.lineWidth=.5;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)ctx.strokeRect(c*BLOCK,r*BLOCK,BLOCK,BLOCK);board.forEach((row,r)=>{row.forEach((val,c)=>{if(val)drawBlock(ctx,c,r,val,BLOCK);});});const gy=getGhostY();if(gy!==currentPiece.pos.y)currentPiece.matrix.forEach((row:number[],r:number)=>{row.forEach((val:number,c:number)=>{if(val)drawBlock(ctx,currentPiece.pos.x+c,gy+r,val,BLOCK,.2);});});currentPiece.matrix.forEach((row:number[],r:number)=>{row.forEach((val:number,c:number)=>{if(val)drawBlock(ctx,currentPiece.pos.x+c,currentPiece.pos.y+r,val,BLOCK);});});}
+function drawNext(){nextCtx.fillStyle='#0d1520';nextCtx.fillRect(0,0,nextCanvas.width,nextCanvas.height);const m=nextPiece.matrix,bs=24,ox=Math.floor((nextCanvas.width/bs-m[0].length)/2),oy=Math.floor((nextCanvas.height/bs-m.length)/2);m.forEach((row:number[],r:number)=>{row.forEach((val:number,c:number)=>{if(val)drawBlock(nextCtx,ox+c,oy+r,val,bs);});});}
+function updateHUD(){document.getElementById('score')!.textContent=score.toString();document.getElementById('lines')!.textContent=lines.toString();document.getElementById('level')!.textContent=level.toString();}
+function endGame(){gameOver=true;cancelAnimationFrame(animId);(window as any).showRanking?.(score);}
+function gameLoop(time=0){if(paused||gameOver)return;const delta=time-lastTime;lastTime=time;dropCounter+=delta;if(dropCounter>=Math.max(100,800-(level-1)*70))drop();drawBoard();animId=requestAnimationFrame(gameLoop);}
+
+function startGame(){board=createBoard();score=0;lines=0;level=1;gameOver=false;paused=false;dropCounter=0;lastTime=0;updateHUD();nextPiece=randomPiece();spawnPiece();overlay.classList.add('hidden');cancelAnimationFrame(animId);animId=requestAnimationFrame(gameLoop);}
+(window as any).restartGame=startGame;
+
+document.addEventListener('keydown',(e)=>{
+  if(!gameOver&&(e.key==='Enter'))startGame();
+  if(e.key==='p'||e.key==='P'){if(!gameOver){paused=!paused;if(!paused){lastTime=performance.now();overlay.classList.add('hidden');animId=requestAnimationFrame(gameLoop);}else{cancelAnimationFrame(animId);document.getElementById('overlay-title')!.textContent='PAUSED';document.getElementById('overlay-sub')!.textContent='Pulsa P para continuar';overlay.classList.remove('hidden');}}}
+  if(paused||gameOver)return;
+  if(e.key==='ArrowLeft'){e.preventDefault();if(!collides(currentPiece.matrix,{x:currentPiece.pos.x-1,y:currentPiece.pos.y}))currentPiece.pos.x--;}
+  if(e.key==='ArrowRight'){e.preventDefault();if(!collides(currentPiece.matrix,{x:currentPiece.pos.x+1,y:currentPiece.pos.y}))currentPiece.pos.x++;}
+  if(e.key==='ArrowDown'){e.preventDefault();drop();updateHUD();}
+  if(e.key==='ArrowUp'){e.preventDefault();tryRotate();}
+  if(e.key===' '){e.preventDefault();hardDrop();}
+});
+overlay.addEventListener('click',startGame);
+document.getElementById('btn-left')?.addEventListener('click',()=>{if(!collides(currentPiece.matrix,{x:currentPiece.pos.x-1,y:currentPiece.pos.y}))currentPiece.pos.x--;});
+document.getElementById('btn-right')?.addEventListener('click',()=>{if(!collides(currentPiece.matrix,{x:currentPiece.pos.x+1,y:currentPiece.pos.y}))currentPiece.pos.x++;});
+document.getElementById('btn-rotate')?.addEventListener('click',()=>tryRotate());
+document.getElementById('btn-down')?.addEventListener('click',()=>{drop();updateHUD();});
+document.getElementById('btn-drop')?.addEventListener('click',()=>hardDrop());
+nextPiece=randomPiece();drawNext();
+</script>

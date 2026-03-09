@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArcadeRanking from '../../components/ArcadeRanking.astro';
+---
+
+<BaseLayout title="// PONG — Arcade" description="Pong vs IA">
+  <div class="game-wrapper">
+    <div class="game-container">
+      <div class="game-header">
+        <a href="/games" class="back-link mono">← arcade</a>
+        <span class="game-title mono accent">PONG</span>
+        <div class="game-meta">
+          <div class="meta-item"><span class="meta-label">TÚ</span><span class="meta-value" id="score-p">0</span></div>
+          <div class="meta-item"><span class="meta-label">CPU</span><span class="meta-value" id="score-cpu">0</span></div>
+        </div>
+      </div>
+      <canvas id="pong" width="480" height="360"></canvas>
+      <div class="hint mono">Mouse o ↑↓ para mover · Primero en 7 gana</div>
+      <div id="overlay" class="overlay">
+        <div class="overlay-content">
+          <div class="overlay-title">PONG</div>
+          <div class="overlay-sub" id="overlay-sub">Pulsa ENTER o toca para jugar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ArcadeRanking gameId="pong" />
+</BaseLayout>
+
+<style>
+.game-wrapper{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1rem 2rem;}
+.game-container{position:relative;display:flex;flex-direction:column;gap:.75rem;max-width:520px;width:100%;}
+.game-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
+.back-link{font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);transition:color .2s;}
+.back-link:hover{color:var(--accent);}
+.game-title{font-size:1rem;letter-spacing:.1em;}
+.game-meta{display:flex;gap:1.5rem;}
+.meta-item{display:flex;flex-direction:column;align-items:center;}
+.meta-label{font-family:var(--font-mono);font-size:.65rem;color:var(--text-muted);letter-spacing:.1em;}
+.meta-value{font-family:var(--font-mono);font-size:1.5rem;font-weight:700;color:var(--accent);}
+#pong{border:1px solid var(--border-accent);border-radius:4px;background:#0d1520;box-shadow:0 0 30px rgba(0,212,170,.1);max-width:100%;height:auto;display:block;margin:0 auto;}
+.hint{font-size:.72rem;color:var(--text-muted);text-align:center;letter-spacing:.05em;}
+.overlay{position:absolute;inset:0;top:50px;display:flex;align-items:center;justify-content:center;background:rgba(8,13,19,.92);border-radius:4px;backdrop-filter:blur(4px);cursor:pointer;z-index:10;}
+.overlay.hidden{display:none;}
+.overlay-content{text-align:center;padding:2rem;}
+.overlay-title{font-family:var(--font-mono);font-size:2.5rem;font-weight:700;color:var(--accent);letter-spacing:.2em;margin-bottom:.5rem;text-shadow:0 0 20px rgba(0,212,170,.5);}
+.overlay-sub{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);}
+.accent{color:var(--accent);}
+.mono{font-family:var(--font-mono);}
+</style>
+
+<script>
+const canvas = document.getElementById('pong') as HTMLCanvasElement;
+const ctx = canvas.getContext('2d')!;
+const overlay = document.getElementById('overlay')!;
+const W = canvas.width, H = canvas.height;
+const WIN_SCORE = 7;
+const PAD_W = 12, PAD_H = 70, PAD_MARGIN = 20;
+const BALL_S = 10;
+
+let player: {y:number,score:number}, cpu: {y:number,score:number};
+let ball: {x:number,y:number,vx:number,vy:number};
+let started: boolean, gameOver: boolean, animId: number;
+let keys: Record<string,boolean> = {};
+
+function resetBall(dir=1) {
+  const angle = (Math.random()*40+20)*(Math.PI/180)*(Math.random()>.5?1:-1);
+  const speed = 5;
+  ball = {x:W/2,y:H/2, vx:speed*dir, vy:speed*Math.tan(angle)};
+}
+
+function startGame() {
+  player = {y:H/2-PAD_H/2, score:0};
+  cpu    = {y:H/2-PAD_H/2, score:0};
+  gameOver = false; started = true;
+  resetBall();
+  overlay.classList.add('hidden');
+  cancelAnimationFrame(animId);
+  animId = requestAnimationFrame(gameLoop);
+  updateHUD();
+}
+(window as any).restartGame = startGame;
+
+function updateHUD() {
+  document.getElementById('score-p')!.textContent = player.score.toString();
+  document.getElementById('score-cpu')!.textContent = cpu.score.toString();
+}
+
+function gameLoop() {
+  if (gameOver) return;
+  update();
+  draw();
+  animId = requestAnimationFrame(gameLoop);
+}
+
+function update() {
+  // Player movement
+  const speed = 6;
+  if (keys['ArrowUp'])   player.y = Math.max(0, player.y - speed);
+  if (keys['ArrowDown']) player.y = Math.min(H - PAD_H, player.y + speed);
+
+  // CPU AI (slightly imperfect)
+  const cpuCenter = cpu.y + PAD_H/2;
+  const diff = ball.y - cpuCenter;
+  const aiSpeed = 4 + Math.min(player.score + cpu.score, 6) * 0.3;
+  if (Math.abs(diff) > 5) cpu.y += diff > 0 ? Math.min(aiSpeed, diff) : Math.max(-aiSpeed, diff);
+  cpu.y = Math.max(0, Math.min(H - PAD_H, cpu.y));
+
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  // Top/bottom
+  if (ball.y <= 0) { ball.y=0; ball.vy=Math.abs(ball.vy); }
+  if (ball.y+BALL_S >= H) { ball.y=H-BALL_S; ball.vy=-Math.abs(ball.vy); }
+
+  // Player paddle
+  if (ball.x <= PAD_MARGIN+PAD_W && ball.x >= PAD_MARGIN &&
+      ball.y+BALL_S >= player.y && ball.y <= player.y+PAD_H) {
+    ball.x = PAD_MARGIN+PAD_W+1;
+    const hit = (ball.y+BALL_S/2 - (player.y+PAD_H/2)) / (PAD_H/2);
+    const speed = Math.sqrt(ball.vx**2+ball.vy**2) * 1.05;
+    const angle = hit * 55 * (Math.PI/180);
+    ball.vx = Math.abs(speed*Math.cos(angle));
+    ball.vy = speed*Math.sin(angle);
+  }
+
+  // CPU paddle
+  if (ball.x+BALL_S >= W-PAD_MARGIN-PAD_W && ball.x+BALL_S <= W-PAD_MARGIN &&
+      ball.y+BALL_S >= cpu.y && ball.y <= cpu.y+PAD_H) {
+    ball.x = W-PAD_MARGIN-PAD_W-BALL_S-1;
+    const hit = (ball.y+BALL_S/2 - (cpu.y+PAD_H/2)) / (PAD_H/2);
+    const speed = Math.sqrt(ball.vx**2+ball.vy**2) * 1.02;
+    const angle = hit * 55 * (Math.PI/180);
+    ball.vx = -Math.abs(speed*Math.cos(angle));
+    ball.vy = speed*Math.sin(angle);
+  }
+
+  // Score
+  if (ball.x < 0) {
+    cpu.score++;
+    updateHUD();
+    if (cpu.score >= WIN_SCORE) { endGame(false); return; }
+    resetBall(1);
+  }
+  if (ball.x > W) {
+    player.score++;
+    updateHUD();
+    if (player.score >= WIN_SCORE) { endGame(true); return; }
+    resetBall(-1);
+  }
+}
+
+function endGame(won: boolean) {
+  gameOver = true;
+  cancelAnimationFrame(animId);
+  const finalScore = player.score * 100 - cpu.score * 10;
+  if (won) {
+    (window as any).showRanking?.(Math.max(0, finalScore));
+  } else {
+    document.getElementById('overlay-sub')!.textContent = 'La CPU ganó. ENTER para reintentar';
+    overlay.classList.remove('hidden');
+    document.getElementById('overlay').querySelector('.overlay-title')!.textContent = won ? '¡GANASTE!' : 'GAME OVER';
+    (window as any).showRanking?.(Math.max(0, finalScore));
+  }
+}
+
+function draw() {
+  ctx.fillStyle = '#0d1520';
+  ctx.fillRect(0, 0, W, H);
+
+  // Center line
+  ctx.setLineDash([8,8]);
+  ctx.strokeStyle = 'rgba(255,255,255,.1)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Paddles
+  ctx.fillStyle = '#00d4aa';
+  ctx.beginPath(); ctx.roundRect(PAD_MARGIN, player.y, PAD_W, PAD_H, 3); ctx.fill();
+  ctx.fillStyle = '#3b82f6';
+  ctx.beginPath(); ctx.roundRect(W-PAD_MARGIN-PAD_W, cpu.y, PAD_W, PAD_H, 3); ctx.fill();
+
+  // Ball
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.roundRect(ball.x, ball.y, BALL_S, BALL_S, 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.15)';
+  ctx.beginPath(); ctx.roundRect(ball.x-3, ball.y-3, BALL_S+6, BALL_S+6, 4); ctx.fill();
+}
+
+document.addEventListener('keydown', (e) => {
+  keys[e.key] = true;
+  if (!started || gameOver) { if (e.key==='Enter') startGame(); }
+});
+document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+canvas.addEventListener('mousemove', (e) => {
+  if (!started || gameOver) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleY = H / rect.height;
+  player.y = Math.max(0, Math.min(H-PAD_H, (e.clientY-rect.top)*scaleY - PAD_H/2));
+});
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const scaleY = H / rect.height;
+  player.y = Math.max(0, Math.min(H-PAD_H, (e.touches[0].clientY-rect.top)*scaleY - PAD_H/2));
+},{passive:false});
+
+overlay.addEventListener('click', startGame);
+</script>

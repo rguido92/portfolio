@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const games = [
+  {
+    id: 'tetris',
+    title: 'TETRIS',
+    desc: 'Encaja las piezas. Sobrevive.',
+    key: 'INSERT COIN',
+    href: '/games/tetris',
+    icon: '🟦',
+  },
+  {
+    id: 'snake',
+    title: 'SNAKE',
+    desc: 'Come. Crece. No te muerdas.',
+    key: 'INSERT COIN',
+    href: '/games/snake',
+    icon: '🟩',
+  },
+  {
+    id: 'breakout',
+    title: 'BREAKOUT',
+    desc: 'Rompe todos los bloques.',
+    key: 'INSERT COIN',
+    href: '/games/breakout',
+    icon: '🟥',
+  },
+  {
+    id: 'pong',
+    title: 'PONG',
+    desc: 'Derrota a la máquina.',
+    key: 'INSERT COIN',
+    href: '/games/pong',
+    icon: '⬜',
+  },
+  {
+    id: 'invaders',
+    title: 'INVADERS',
+    desc: 'Elimina la invasión.',
+    key: 'INSERT COIN',
+    href: '/games/invaders',
+    icon: '👾',
+  },
+];
+---
+
+<BaseLayout title="// arcade — Rodrigo Guido" description="Sala de recreativas secreta">
+  <div class="arcade-wrapper">
+    <div class="arcade-header">
+      <a href="/" class="back-link mono">← volver al portfolio</a>
+      <h1 class="arcade-title">
+        <span class="blink">█</span> ARCADE <span class="blink2">█</span>
+      </h1>
+      <p class="arcade-sub mono">// selecciona un juego</p>
+    </div>
+
+    <div class="games-grid">
+      {games.map((game) => (
+        <a href={game.href} class="game-card">
+          <div class="game-icon">{game.icon}</div>
+          <div class="game-info">
+            <div class="game-name mono">{game.title}</div>
+            <div class="game-desc">{game.desc}</div>
+          </div>
+          <div class="game-coin mono">{game.key} →</div>
+          <div class="game-ranking" id={`ranking-${game.id}`}>
+            <div class="ranking-loading mono">cargando ranking...</div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .arcade-wrapper {
+    min-height: 100vh;
+    padding: 7rem 1.5rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .arcade-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  .arcade-title {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-shadow: 0 0 30px rgba(0,212,170,0.4);
+    margin-bottom: 0.5rem;
+  }
+
+  .arcade-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .blink  { animation: blink 1s infinite; }
+  .blink2 { animation: blink 1s 0.5s infinite; }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .game-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+  }
+
+  .game-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,212,170,0.08);
+  }
+
+  .game-card:hover::before { transform: scaleX(1); }
+
+  .game-icon { font-size: 2rem; }
+
+  .game-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.1em;
+  }
+
+  .game-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .game-coin {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .game-card:hover .game-coin { opacity: 1; }
+
+  .game-ranking {
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .ranking-loading {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .ranking-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding: 0.1rem 0;
+  }
+
+  .ranking-row .pos { color: var(--accent); width: 1.5rem; }
+  .ranking-row .name { color: var(--text-secondary); width: 3rem; }
+  .ranking-row .pts { color: var(--text-primary); text-align: right; flex: 1; }
+
+  .mono { font-family: var(--font-mono); }
+</style>
+
+<script>
+  const GAME_IDS = ['tetris', 'snake', 'breakout', 'pong', 'invaders'];
+
+  async function loadRankings() {
+    for (const id of GAME_IDS) {
+      try {
+        const result = await window.storage.get(`ranking:${id}`, true);
+        const scores = result ? JSON.parse(result.value) : [];
+        renderRanking(id, scores.slice(0, 3));
+      } catch {
+        renderRanking(id, []);
+      }
+    }
+  }
+
+  function renderRanking(id: string, scores: {name: string, score: number}[]) {
+    const container = document.getElementById(`ranking-${id}`);
+    if (!container) return;
+    if (scores.length === 0) {
+      container.innerHTML = '<div class="ranking-loading mono">sé el primero en el ranking</div>';
+      return;
+    }
+    container.innerHTML = scores.map((s, i) =>
+      `<div class="ranking-row">
+        <span class="pos">${i + 1}.</span>
+        <span class="name">${s.name}</span>
+        <span class="pts">${s.score.toLocaleString()}</span>
+      </div>`
+    ).join('');
+  }
+
+  loadRankings();
+</script>
