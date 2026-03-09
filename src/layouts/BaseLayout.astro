@@ -5,7 +5,7 @@ interface Props {
 }
 
 const {
-  title = 'Rodrigo Guido — Java Backend Developer',
+  title = 'Rodrigo Guido Arias — Java Backend Developer',
   description = 'Desarrollador Backend especializado en Java con Spring Boot, PostgreSQL e Hibernate. Microservicios REST, arquitectura limpia y metodología Scrum. Vigo, España.',
 } = Astro.props;
 ---
@@ -16,7 +16,7 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="author" content="Rodrigo Guido" />
+    <meta name="author" content="Rodrigo Guido Arias" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -54,7 +54,8 @@ const {
     <footer>
       <div class="container">
         <p>
-          Construido con <span>Astro</span> · Rodrigo Guido  &copy; {new Date().getFullYear()}
+          Construido con <span>Astro</span> · Rodrigo Guido Arias &copy; {new Date().getFullYear()}
+          <a href="/game" class="easter-egg" title="👾">·_·</a>
         </p>
       </div>
     </footer>

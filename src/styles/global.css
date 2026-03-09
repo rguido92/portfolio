@@ -1,5 +1,5 @@
 /* ============================================
-   RODRIGO GUIDO  — PORTFOLIO
+   RODRIGO GUIDO ARIAS — PORTFOLIO
    Design: Dark terminal aesthetic, clean & sharp
    ============================================ */
 
@@ -24,9 +24,7 @@
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -93,10 +91,7 @@ section {
 /* ============================================
    TYPOGRAPHY
    ============================================ */
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   font-family: var(--font-sans);
   font-weight: 700;
   line-height: 1.2;
@@ -747,6 +742,20 @@ footer span {
   color: var(--accent);
 }
 
+.easter-egg {
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+  opacity: 0.25;
+  transition: opacity 0.3s, color 0.3s;
+  font-family: var(--font-mono);
+  text-decoration: none;
+}
+
+.easter-egg:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
 /* ============================================
    ANIMATIONS
    ============================================ */
@@ -755,7 +764,6 @@ footer span {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -777,9 +785,7 @@ footer span {
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
+  .nav-links { display: none; }
 
   .about-grid {
     grid-template-columns: 1fr;
@@ -794,29 +800,17 @@ footer span {
     grid-template-columns: 1fr;
   }
 
-  .hero-name {
-    font-size: 2.5rem;
-  }
+  .hero-name { font-size: 2.5rem; }
 
   .stack-groups {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  section {
-    padding: 3.5rem 0;
-  }
+  section { padding: 3.5rem 0; }
 }
 
 @media (max-width: 480px) {
-  .stack-groups {
-    grid-template-columns: 1fr;
-  }
-
-  .about-stats {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .hero-cta {
-    flex-direction: column;
-  }
+  .stack-groups { grid-template-columns: 1fr; }
+  .about-stats { grid-template-columns: 1fr 1fr; }
+  .hero-cta { flex-direction: column; }
 }
