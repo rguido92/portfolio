@@ -1,0 +1,399 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    id: 'jukids',
+    title: 'Jukids — Aplicación Web Fullstack',
+    featured: true,
+    badges: [
+      { label: 'En producción', type: 'production' },
+      { label: 'Equipo · Scrum', type: 'team' },
+    ],
+    desc: 'Aplicación web fullstack desarrollada en equipo durante el Bootcamp Full Stack (IMATIA) bajo metodología Scrum. Plataforma con roles diferenciados (administrador y cliente) desplegada y activa en producción.',
+    highlights: [
+      'Desarrollo backend y integración con frontend Angular',
+      'Sprints semanales, daily standups y retrospectivas',
+      'Despliegue en producción con roles administrador y cliente',
+      'Demo Day final con presentación ante profesionales del sector',
+    ],
+    stack: ['Java', 'Spring Boot', 'Angular', 'PostgreSQL', 'REST APIs', 'Scrum'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/CampusDual/2024-BFS-3-G1_Jukids' },
+      { label: 'Demo en vivo', href: 'https://cd2024bfs3g1.dev.campusdual.com' },
+      { label: 'Demo Day ▶', href: 'https://www.youtube.com/watch?v=Cb9TtyORITw' },
+    ],
+  },
+  {
+    id: 'microservicios',
+    title: 'Arquitectura de Microservicios',
+    featured: false,
+    badges: [],
+    desc: 'Sistema de reservas y comentarios compuesto por 2 microservicios REST desacoplados con comunicación mediante APIs bien definidas.',
+    highlights: [
+      '2 microservicios REST desacoplados',
+      '+10 endpoints CRUD con validación y respuestas HTTP semánticas',
+      'Migraciones versionadas con Flyway entre entornos',
+      'Arquitectura Controller → Service → Repository',
+    ],
+    stack: ['Java', 'Spring Boot', 'Hibernate', 'PostgreSQL', 'Flyway', 'REST APIs'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rguido92/Proyecto_Microservicios' },
+    ],
+  },
+  {
+    id: 'sockets',
+    title: 'Sistema Cliente-Servidor con Sockets',
+    featured: false,
+    badges: [],
+    desc: 'Sistema de comunicación TCP/UDP con gestión de múltiples conexiones concurrentes y control de flujo robusto entre cliente y servidor.',
+    highlights: [
+      'Comunicación TCP y UDP con control de flujo',
+      'Múltiples conexiones concurrentes con sincronización',
+      'Protocolo de intercambio de datos con manejo de errores robusto',
+    ],
+    stack: ['Java', 'Networking', 'TCP', 'UDP', 'Concurrency'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rguido92/obbackend' },
+    ],
+  },
+  {
+    id: 'empresa',
+    title: 'Sistema de Gestión de Empresa',
+    featured: false,
+    badges: [],
+    desc: 'Sistema de gestión con persistencia ORM completa, modelado relacional avanzado y lógica de negocio centralizada en capa Service.',
+    highlights: [
+      'Relaciones N:M entre empleados y proyectos con integridad referencial',
+      'Persistencia ORM completa con Hibernate/JPA',
+      'Reglas de negocio centralizadas en capa Service',
+    ],
+    stack: ['Java', 'Hibernate', 'JPA', 'PostgreSQL'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rguido92/appmazing' },
+    ],
+  },
+  {
+    id: 'python',
+    title: 'Python Learning Project',
+    featured: false,
+    badges: [{ label: 'En desarrollo activo', type: 'active' }],
+    desc: 'Aplicación de gestión de biblioteca construida con TDD desde el primer commit, con integración progresiva de análisis de datos.',
+    highlights: [
+      'TDD aplicado desde el primer commit',
+      '+20 tests unitarios en verde con cobertura creciente',
+      'Integración progresiva de módulos de análisis de datos',
+    ],
+    stack: ['Python', 'Testing', 'TDD', 'Data Analysis'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/rguido92/python-learning-journey' },
+    ],
+  },
+];
+
+const stackGroups = [
+  {
+    label: 'Lenguajes',
+    items: ['Java 17', 'Python', 'SQL'],
+  },
+  {
+    label: 'Backend',
+    items: ['Spring Boot', 'REST APIs', 'Hibernate', 'JPA'],
+  },
+  {
+    label: 'Bases de datos',
+    items: ['PostgreSQL', 'Modelado relacional'],
+  },
+  {
+    label: 'Arquitectura',
+    items: ['MVC', 'DAO', 'Service Layer', 'Microservicios'],
+  },
+  {
+    label: 'Sistemas',
+    items: ['Concurrencia Java', 'TCP/UDP Networking'],
+  },
+  {
+    label: 'Frontend',
+    items: ['Angular', 'HTML', 'CSS'],
+  },
+  {
+    label: 'Herramientas',
+    items: ['Git', 'Flyway'],
+  },
+  {
+    label: 'Metodologías',
+    items: ['Scrum', 'TDD', 'Desarrollo iterativo', 'Code Review'],
+  },
+];
+
+const education = [
+  {
+    period: '2024',
+    title: 'Bootcamp Full Stack · 420h',
+    place: 'CampusDual TIC (IMATIA)',
+    desc: 'Desarrollo en equipo bajo metodología Scrum. Sprints semanales, daily standups, revisiones de código y retrospectivas. Proyecto final Jukids desplegado en producción.',
+  },
+  {
+    period: '2024',
+    title: 'Bootcamp Low-Code · 330h',
+    place: 'CampusDual TIC (VELNEO)',
+    desc: 'Desarrollo orientado a negocio con plataforma low-code Velneo. Visión práctica del desarrollo empresarial y capacidad de adaptación a entornos fuera del stack tradicional.',
+  },
+  {
+    period: '2022 – 2024',
+    title: 'Técnico Superior en Desarrollo de Aplicaciones Multiplataforma',
+    place: 'IES Teis · Vigo',
+    desc: 'Especialización en desarrollo backend, bases de datos y arquitectura de software.',
+  },
+];
+---
+
+<BaseLayout>
+  <!-- ======================== HERO ======================== -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">// Java Backend Developer</p>
+      <h1 class="hero-name">
+        Rodrigo<br /><span class="accent">Guido </span>
+      </h1>
+      <p class="hero-title">Backend · Microservicios · Scrum</p>
+      <p class="hero-desc">
+        Desarrollador Backend especializado en Java con formación en CFGS DAM.
+        Construyo microservicios REST con Spring Boot, PostgreSQL e Hibernate
+        aplicando arquitectura limpia y buenas prácticas. Cómodo trabajando en
+        equipo con entregas iterativas.
+      </p>
+      <div class="hero-cta">
+        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+        <a href="#contacto" class="btn btn-outline">Contacto</a>
+        <a
+          href="https://github.com/rguido92"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-outline"
+        >
+          GitHub ↗
+        </a>
+      </div>
+      <div class="hero-social">
+        <a
+          href="https://linkedin.com/in/rodrigo-guido92"
+          target="_blank"
+          rel="noopener"
+          class="social-link"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn
+        </a>
+        <a href="mailto:13rguido@gmail.com" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,12 2,6"></polyline>
+          </svg>
+          Email
+        </a>
+        <a href="tel:633315824" class="social-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.22 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"></path>
+          </svg>
+          633 31 58 24
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== SOBRE MÍ ======================== -->
+  <section id="sobre-mi">
+    <div class="container">
+      <h2 class="section-title fade-in">Sobre mí</h2>
+      <p class="section-subtitle fade-in">Quién soy y qué aporto</p>
+      <div class="about-grid">
+        <div class="about-text fade-in">
+          <p>
+            Soy Rodrigo, desarrollador Backend especializado en <strong>Java</strong> con
+            base en CFGS DAM y experiencia práctica construyendo
+            <strong>microservicios REST</strong> con Spring Boot, PostgreSQL e Hibernate.
+          </p>
+          <p>
+            Aplico arquitectura <strong>Controller → Service → Repository</strong> y
+            control de migraciones con Flyway. He trabajado en equipo bajo
+            metodología <strong>Scrum</strong>, participando en sprints semanales,
+            daily standups, revisiones de código y retrospectivas.
+          </p>
+          <p>
+            Complemento mi perfil con desarrollo activo en <strong>Python</strong>
+            orientado a análisis de datos, con énfasis en testing automatizado
+            y desarrollo incremental. Aporto código limpio, buenas prácticas
+            backend y arquitectura escalable.
+          </p>
+          <p>
+            Cómodo trabajando en equipo, con feedback continuo y entregas iterativas.
+          </p>
+        </div>
+        <div class="about-stats fade-in">
+          <div class="stat-card">
+            <div class="stat-number">+10</div>
+            <div class="stat-label">Endpoints CRUD implementados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">+20</div>
+            <div class="stat-label">Tests unitarios en verde</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">420h</div>
+            <div class="stat-label">Bootcamp Full Stack</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Proyectos en GitHub</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== PROYECTOS ======================== -->
+  <section id="proyectos">
+    <div class="container">
+      <h2 class="section-title fade-in">Proyectos</h2>
+      <p class="section-subtitle fade-in">Código real, problemas reales</p>
+      <div class="projects-grid">
+        {projects.map((project, i) => (
+          <article
+            class={`project-card fade-in ${project.featured ? 'featured' : ''}`}
+            style={`transition-delay: ${i * 0.08}s`}
+          >
+            <div class={project.featured ? 'project-inner' : ''}>
+              <div>
+                <div class="project-header">
+                  <h3 class="project-title">{project.title}</h3>
+                  <div class="project-badges">
+                    {project.badges.map((badge) => (
+                      <span class={`badge badge-${badge.type}`}>{badge.label}</span>
+                    ))}
+                  </div>
+                </div>
+                <p class="project-desc">{project.desc}</p>
+              </div>
+              <div>
+                <ul class="project-highlights">
+                  {project.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+                <div class="project-stack">
+                  {project.stack.map((tech) => (
+                    <span class="tag">{tech}</span>
+                  ))}
+                </div>
+                <div class="project-links">
+                  {project.links.map((link) => (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener"
+                      class="project-link"
+                    >
+                      ↗ {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== STACK ======================== -->
+  <section id="stack" class="stack-section">
+    <div class="container">
+      <h2 class="section-title fade-in">Stack tecnológico</h2>
+      <p class="section-subtitle fade-in">Herramientas y tecnologías que uso</p>
+      <div class="stack-groups">
+        {stackGroups.map((group, i) => (
+          <div class="stack-group fade-in" style={`transition-delay: ${i * 0.07}s`}>
+            <h4>{group.label}</h4>
+            <div class="stack-items">
+              {group.items.map((item) => (
+                <span class="stack-item">{item}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== FORMACIÓN ======================== -->
+  <section id="formacion">
+    <div class="container">
+      <h2 class="section-title fade-in">Formación</h2>
+      <p class="section-subtitle fade-in">Educación y cursos</p>
+      <div class="timeline">
+        {education.map((item, i) => (
+          <div class="timeline-item fade-in" style={`transition-delay: ${i * 0.1}s`}>
+            <div class="timeline-period">{item.period}</div>
+            <h3 class="timeline-title">{item.title}</h3>
+            <div class="timeline-place">{item.place}</div>
+            <p class="timeline-desc">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== CONTACTO ======================== -->
+  <section id="contacto" class="contact-section">
+    <div class="container">
+      <h2 class="section-title fade-in">Contacto</h2>
+      <p class="contact-desc fade-in">
+        ¿Tienes una oportunidad o quieres charlar sobre un proyecto?
+        Estoy disponible para primeras oportunidades laborales en el área backend.
+      </p>
+      <div class="contact-links fade-in">
+        <a
+          href="mailto:13rguido@gmail.com"
+          class="contact-card"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,12 2,6"></polyline>
+          </svg>
+          13rguido@gmail.com
+        </a>
+        <a
+          href="https://linkedin.com/in/rodrigo-guido92"
+          target="_blank"
+          rel="noopener"
+          class="contact-card"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          LinkedIn
+        </a>
+        <a
+          href="https://github.com/rguido92"
+          target="_blank"
+          rel="noopener"
+          class="contact-card"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="tel:633315824" class="contact-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.22 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"></path>
+          </svg>
+          633 31 58 24
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
